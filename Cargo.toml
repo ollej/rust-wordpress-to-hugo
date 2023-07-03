@@ -1,0 +1,15 @@
+[package]
+name = "convert-wordpress-to-hugo"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+futures = "0.3.28"
+html2md = "0.2.14"
+regex = "1.8.3"
+sqlx = { version = "0.6", features = [ "runtime-tokio-native-tls" , "mysql", "chrono" ] }
+tokio = { version = "1", features = ["full"] }
+unidecode = "0.3.0"
+
