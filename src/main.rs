@@ -95,7 +95,7 @@ fn sanitize(filename: String) -> String {
 #[tokio::main]
 async fn main() -> Result<(), sqlx::Error> {
     let pool = MySqlPoolOptions::new()
-        .max_connections(5)
+        .max_connections(1)
         .connect(DATABASE_URL)
         .await?;
 
@@ -107,7 +107,8 @@ async fn main() -> Result<(), sqlx::Error> {
         FROM wp_posts AS p
         INNER JOIN wp_users AS u ON p.post_author = u.ID 
         INNER JOIN wp_term_relationships AS tr ON p.ID = tr.object_id
-        INNER JOIN wp_terms AS t ON tr.term_taxonomy_id = t.term_id
+        INNER JOIN wp_term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+        INNER JOIN wp_terms AS t ON tt.term_id = t.term_id
         WHERE post_type = 'post' AND post_status = 'publish'
         GROUP BY p.ID",
     )
@@ -117,18 +118,13 @@ async fn main() -> Result<(), sqlx::Error> {
     // Create Hugo content
     fs::create_dir_all(&DIR)?;
     for post in posts {
-        let author = if post.author == "admin".to_string() || post.author == "olle".to_string() {
-            "Olle Wreede".to_string()
-        } else {
-            post.author
-        };
         let content = HugoContent {
             category: "blog".to_string(),
             title: post.title,
-            author,
+            author: "Olle Wreede".to_string(),
             date: post.date,
-            content: parse_html(&post.content),
-            draft: post.status == "publish",
+            content: textwrap::wrap(&parse_html(&post.content), 75).join("\n"),
+            draft: post.status != "publish",
             tags: post.terms.split(",").map(String::from).collect(),
         };
         content.write()?;

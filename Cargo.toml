@@ -9,7 +9,8 @@ edition = "2021"
 futures = "0.3.28"
 html2md = "0.2.14"
 regex = "1.8.3"
-sqlx = { version = "0.6", features = [ "runtime-tokio-native-tls" , "mysql", "chrono" ] }
+sqlx = { version = "0.6", features = [ "runtime-tokio-native-tls", "mysql", "chrono" ] }
+textwrap = "0.16.0"
 tokio = { version = "1", features = ["full"] }
 unidecode = "0.3.0"
 
