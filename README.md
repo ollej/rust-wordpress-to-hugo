@@ -25,3 +25,9 @@ $ docker exec -i wordpress-db sh -c 'exec mariadb -uroot -p"password" -D wordpre
 ```bash
 $ docker exec -it wordpress-db sh -c 'exec mariadb -uroot -p"password" -D wordpressdb'
 ```
+
+## Fix column with incorrect encoding
+
+```sql
+UPDATE wp_terms SET name = CONVERT(CONVERT(CONVERT(name USING latin1) USING binary) USING UTF8);
+```
