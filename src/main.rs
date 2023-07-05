@@ -1,4 +1,5 @@
 use html2md::parse_html;
+use htmlentity::entity::{decode, ICodedDataTrait};
 use regex::Regex;
 use sqlx::mysql::MySqlPoolOptions;
 use sqlx::types::chrono::NaiveDateTime;
@@ -93,7 +94,7 @@ fn sanitize(filename: String) -> String {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), sqlx::Error> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pool = MySqlPoolOptions::new()
         .max_connections(1)
         .connect(DATABASE_URL)
@@ -120,10 +121,11 @@ async fn main() -> Result<(), sqlx::Error> {
     for post in posts {
         let content = HugoContent {
             category: "blog".to_string(),
-            title: post.title,
+            title: decode(post.title.as_bytes()).to_string()?,
             author: "Olle Wreede".to_string(),
             date: post.date,
-            content: textwrap::wrap(&parse_html(&post.content), 75).join("\n"),
+            //content: textwrap::wrap(&parse_html(&post.content), 75).join("\n"),
+            content: post.content,
             draft: post.status != "publish",
             tags: post.terms.split(",").map(String::from).collect(),
         };
