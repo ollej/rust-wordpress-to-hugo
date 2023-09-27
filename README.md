@@ -5,7 +5,7 @@ Convert blog posts from an old Wordpress site to Hugo.
 ## Usage
 
 Update the `DATABASE_URL` in `src/main.rs` to the MySQL/MariaDB Wordpress
-database.
+database. The Hugo content files will be created in the directory `content`.
 
 ## Setup MariaDB locally
 
